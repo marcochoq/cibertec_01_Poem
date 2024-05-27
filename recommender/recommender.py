@@ -11,7 +11,7 @@ from nltk.stem import WordNetLemmatizer
 
 class PoemRecommender:
 
-    def __init__(self, poems_dataset, vectorizer_path='vectorizer.pickle', matrix_path='poems_count_matrix.pickle'):
+    def __init__(self, poems_dataset, vectorizer_path='pickles_files/vectorizer.pickle', matrix_path='pickles_files/poems_count_matrix.pickle'):
         self.poems_dataset = poems_dataset
         self.lemmatizer = WordNetLemmatizer()
         

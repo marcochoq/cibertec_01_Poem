@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404 ,redirect
+from django.shortcuts import render, get_object_or_404 ,redirect,HttpResponse
 from .models import Poem
 from .recommender import PoemRecommender
 from django.conf import settings
@@ -45,7 +45,7 @@ def save_poem(request):
         
         Poem.objects.create(title=title, poet=poet, content=content, tags=tags)
         
-        return redirect('index')
+        return HttpResponse(status=204)
 
 def saved_poems(request):
     poems = Poem.objects.all()
