@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col justify-center items-center bg-gray-50 py-10">
+    <div class="bg-white shadow-2xl rounded-xl p-12 text-center w-full max-w-4xl">
+        <h1 class="text-4xl font-extrabold text-gray-800 mb-8">Bienvenido al Recomendador de Poemas</h1>
+        <p class="text-lg text-gray-600 mb-8">Introduce un tema y recibe recomendaciones de poemas.</p>
+        <form method="post" class="flex items-center w-full space-x-4">
+            {% csrf_token %}
+            <input type="text" name="theme" class="form-input shadow-md focus:ring-2 focus:ring-blue-500 focus:outline-none mt-2 mb-4 w-3/4 rounded-md p-4 text-lg placeholder-gray-400" placeholder="Introduce un tema">
+            <button type="submit" class="w-1/4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-3 rounded-md hover:from-blue-600 hover:to-indigo-600 transition duration-300">Recomendar</button>
+        </form>
+    </div>
+
+    {% if recommendations %}
+    <div class="mt-16 w-full max-w-7xl px-7 bg-gray-800 py-10 rounded-lg shadow-2xl">
+        <h2 class="text-3xl font-bold text-center mb-10 text-white">Recomendaciones</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+            {% for poem in recommendations %}
+            <div class="bg-white shadow-lg rounded-lg overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-2xl">
+                <div class="p-6">
+                    <h5 class="text-2xl font-bold text-gray-900">{{ poem.titulo }}</h5>
+                    <h6 class="text-lg text-gray-700 mb-4">por {{ poem.poeta }}</h6>
+                    <hr class="my-4 border-gray-300">
+                    <p class="text-base text-gray-800">{{ poem.Poem }}</p>
+                    <div class="mt-4">
+                        <span class="text-sm text-gray-500">{{ poem.tags }}</span>
+                    </div>
+                    <form method="post" action="{% url 'save_poem' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="title" value="{{ poem.titulo }}">
+                        <input type="hidden" name="poet" value="{{ poem.poeta }}">
+                        <input type="hidden" name="content" value="{{ poem.Poem }}">
+                        <input type="hidden" name="tags" value="{{ poem.tags }}">
+                        <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-md mt-4">Guardar</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

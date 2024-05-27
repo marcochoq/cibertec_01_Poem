@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col justify-center items-center bg-gray-50 py-10">
+    <div class="bg-white shadow-2xl rounded-xl p-12 text-center w-full max-w-4xl">
+        <h1 class="text-4xl font-extrabold text-gray-800 mb-8">Poemas Guardados</h1>
+        <div class="w-full">
+            {% for poem in poems %}
+            <div class="bg-white shadow-lg rounded-lg overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-2xl mb-8">
+                <div class="p-6">
+                    <h5 class="text-2xl font-bold text-gray-900">{{ poem.title }}</h5>
+                    <h6 class="text-lg text-gray-700 mb-4">por {{ poem.poet }}</h6>
+                    <hr class="my-4 border-gray-300">
+                    <div x-data="{ expanded: false }">
+                        <p class="text-base text-gray-800" x-show="expanded" x-cloak>{{ poem.content }}</p>
+                        <p class="text-base text-gray-800" x-show="!expanded" x-cloak>{{ poem.content|slice:":100" }}...</p>
+                        <button @click="expanded = true" x-show="!expanded" class="text-blue-500 hover:underline mt-2" x-cloak>Leer más</button>
+                        <button @click="expanded = false" x-show="expanded" class="text-blue-500 hover:underline mt-2" x-cloak>Leer menos</button>
+                    </div>
+                    <div class="mt-4 flex justify-between">
+                        <span class="text-sm text-gray-500">{{ poem.tags }}</span>
+                        <form method="post" action="{% url 'delete_poem' poem.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-md">Eliminar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
