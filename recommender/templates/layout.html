@@ -8,8 +8,19 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.2.4/alpine.js" defer></script>
+    <style>
+        body {
+    font-family: 'Arial', sans-serif;
+    background-image: url('/static/img.jpg') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
+}
+
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
+<body>
     <nav class="bg-gray-800 p-4">
         <div class="container mx-auto flex justify-between items-center">
             <a class="text-white text-lg font-bold" href="{% url 'index' %}">Poem Recommender</a>
@@ -22,7 +33,6 @@
                 <ul class="text-white lg:flex lg:justify-between">
                     <li><a class="block lg:inline-block mt-4 lg:mt-0 lg:ml-6" href="{% url 'index' %}">Inicio</a></li>
                     <li><a class="block lg:inline-block mt-4 lg:mt-0 lg:ml-6" href="{% url 'saved_poems' %}">Poemas Guardados</a></li>
-                    <!-- Puedes añadir más enlaces aquí -->
                 </ul>
             </div>
         </div>

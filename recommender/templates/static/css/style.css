@@ -1,7 +1,12 @@
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f4f4f9;
+    background-image: url('/static/img.jpg') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
 }
+
 
 .form-input {
     width: 100%;
