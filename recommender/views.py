@@ -21,11 +21,7 @@ def index(request):
             data = pd.read_csv(data_path)
             recommender = PoemRecommender(data)
             recommendations = recommender.recommend_poems(theme).to_dict(orient='records')
-            
-            # Generar un ID para cada poema si no tiene uno
-            for i, rec in enumerate(recommendations):
-                rec['id'] = i + 1
-    
+  
     return render(request, 'index.html', {'recommendations': recommendations})
 
 def poem_detail(request, poem_id):

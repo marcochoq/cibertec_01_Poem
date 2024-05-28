@@ -11,12 +11,8 @@
                     <h5 class="text-2xl font-bold text-gray-900">{{ poem.title }}</h5>
                     <h6 class="text-lg text-gray-700 mb-4">por {{ poem.poet }}</h6>
                     <hr class="my-4 border-gray-300">
-                    <div x-data="{ expanded: false }">
-                        <p class="text-base text-gray-800" x-show="expanded" x-cloak>{{ poem.content }}</p>
-                        <p class="text-base text-gray-800" x-show="!expanded" x-cloak>{{ poem.content|slice:":100" }}...</p>
-                        <button @click="expanded = true" x-show="!expanded" class="text-blue-500 hover:underline mt-2" x-cloak>Leer más</button>
-                        <button @click="expanded = false" x-show="expanded" class="text-blue-500 hover:underline mt-2" x-cloak>Leer menos</button>
-                    </div>
+                    <p class="text-base text-gray-800">{{ poem.content|slice:":600" }}...</p> <!-- Muestra los primeros 300 caracteres -->
+                    <a href="{% url 'poem_detail' poem.id %}" class="text-blue-500 hover:underline mt-2">Leer más</a>
                     <div class="mt-4 flex justify-between">
                         <span class="text-sm text-gray-500">{{ poem.tags }}</span>
                         <form method="post" action="{% url 'delete_poem' poem.id %}">

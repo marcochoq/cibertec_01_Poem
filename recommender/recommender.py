@@ -8,6 +8,7 @@ nltk.download('punkt')
 nltk.download('wordnet')
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
+from textblob import TextBlob, Word
 
 class PoemRecommender:
 
@@ -31,25 +32,46 @@ class PoemRecommender:
         except FileNotFoundError:
             raise FileNotFoundError(f"No se encontró el archivo de matriz de conteo en {matrix_full_path}. Por favor, asegúrese de que el archivo exista.")
 
+    def get_synonyms(self, word):
+        blob_word = Word(word)
+        synonyms = blob_word.synsets
+        synonyms_list = []
+        for syn in synonyms:
+            for lemma in syn.lemmas():
+                synonyms_list.append(lemma.name())
+        return set(synonyms_list)
+
+    def get_synonyms_tokenized(self, text):
+        tokens = TextBlob(text).words    
+        total_words = set()
+        for word in tokens:
+            synonyms = self.get_synonyms(word)
+            if synonyms:
+                total_words.update(synonyms)
+            else:
+                total_words.add(word)
+        return ' '.join(total_words)
+
     def preprocess_text(self, text):
         tokens = word_tokenize(text)
         lemmatized_tokens = [self.lemmatizer.lemmatize(token) for token in tokens]
         return ' '.join(lemmatized_tokens)
 
     def recommend_poems(self, theme, top_n=3):
-        # Preprocesar el tema
-        processed_theme = self.preprocess_text(theme)
+        # Preprocess the theme and expand with synonyms
+        expanded_theme = self.get_synonyms_tokenized(theme)
+        processed_theme = self.preprocess_text(expanded_theme)
         
-        # Transformar el tema procesado
+        # Transform the processed theme
         theme_count = self.count_vectorizer.transform([processed_theme])
         
-        # Calcular las similitudes de coseno entre el tema y todos los poemas
+        # Calculate cosine similarities between the theme and all poems
         cosine_similarities = cosine_similarity(theme_count, self.poems_count_matrix).flatten()
         
-        # Obtener los índices de los top_n poemas más similares
+        # Get the indices of the top_n most similar poems
         top_poem_indices = cosine_similarities.argsort()[-top_n:][::-1]
         
-        # Seleccionar los poemas recomendados usando los índices obtenidos
+        # Select the recommended poems using the obtained indices
         recommended_poems = self.poems_dataset.iloc[top_poem_indices]
         
         return recommended_poems
