@@ -13,8 +13,16 @@
                     <hr class="my-4 border-gray-300">
                     <p class="text-base text-gray-800">{{ poem.content|slice:":600" }}...</p> <!-- Muestra los primeros 300 caracteres -->
                     <a href="{% url 'poem_detail' poem.id %}" class="text-blue-500 hover:underline mt-2">Leer más</a>
-                    <div class="mt-4 flex justify-between">
-                        <span class="text-sm text-gray-500">{{ poem.tags }}</span>
+                    <div class="mt-4 flex justify-between items-center">
+                        <div class="flex flex-col items-center">
+                            <span class="text-base text-gray-800">Sentimiento:</span> <!-- Mostrar el sentimiento -->
+                            <div class="w-full {{ poem.color_class }} rounded-full">
+                                <div class="text-xs leading-none py-1 text-center text-white rounded-full" style="width: {{ poem.sentiment_percentage|floatformat:2 }}%;">{{ poem.sentiment_percentage|floatformat:2 }}%</div>
+                            </div>
+                        </div>
+                        
+                        
+                        
                         <form method="post" action="{% url 'delete_poem' poem.id %}">
                             {% csrf_token %}
                             <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-md">Eliminar</button>
