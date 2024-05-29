@@ -23,12 +23,7 @@ def index(request):
             data = pd.read_csv(data_path)
             recommender = PoemRecommender(data)
             recommendations = recommender.recommend_poems(theme).to_dict(orient='records')
-            
-            # Añadir análisis de sentimientos
-            for poem in recommendations:
-                analysis = TextBlob(poem['Poem'])
-                poem['sentiment'] = analysis.sentiment.polarity
-
+           
     return render(request, 'index.html', {'recommendations': recommendations, 'theme': theme})
 
 def poem_detail(request, poem_id):
@@ -55,31 +50,56 @@ def saved_poems(request):
     for poem in poems:
         analysis = TextBlob(poem.content)
         poem.sentiment = analysis.sentiment.polarity
-        
-       
-        if poem.sentiment < -0.5:
-            poem.color_class = 'bg-red-700'  # Rojo oscuro
-        elif -0.5 <= poem.sentiment < 0:
-            poem.color_class = 'bg-red-400'  # Rojo claro
-        elif 0 <= poem.sentiment < 0.5:
-            poem.color_class = 'bg-yellow-400'  # Amarillo
-        elif 0.5 <= poem.sentiment < 1:
-            poem.color_class = 'bg-green-400'  # Verde claro
+        poem.sentiment_percentage = round((analysis.sentiment.polarity + 1) * 50, 2)
+                
+        if poem.sentiment_percentage < 33:
+            poem.color_class = 'bg-red-500'  # Rojo
+        elif 33 <= poem.sentiment_percentage < 61:
+            poem.color_class = 'bg-yellow-500'  # Amarillo
         else:
-            poem.color_class = 'bg-green-700'  # Verde oscuro
-
-        poem.sentiment_percentage = abs(poem.sentiment) * 100
-
+            poem.color_class = 'bg-green-400'  # Verde
+         
     return render(request, 'saved_poems.html', {'poems': poems})
 
 
-def determine_color_class(sentiment):
-    if sentiment > 0:
-        return 'bg-green-500'  
-    elif sentiment < 0:
-        return 'bg-red-500'   
-    else:
-        return 'bg-yellow-500'  
+
+def analyze_poem(request):
+    sentiment = None
+    sentiment_label = None
+    color_class = None
+    sentiment_percentage = None
+    poem_content = ''
+
+    if request.method == 'POST':
+        if 'analyze' in request.POST:
+            poem_content = request.POST.get('poem_content', '')
+            if poem_content:
+                analysis = TextBlob(poem_content)
+                sentiment = analysis.sentiment.polarity
+                sentiment_percentage = round((sentiment + 1) * 50, 2)
+                
+                if sentiment_percentage < 33:
+                    sentiment_label = 'Negativo'
+                    color_class = 'bg-red-700'
+                elif 33 <= sentiment_percentage < 61:
+                    sentiment_label = 'Neutral'
+                    color_class = 'bg-yellow-400'
+                elif 62 <= sentiment_percentage < 75:
+                    sentiment_label = 'Positivo'
+                    color_class = 'bg-green-400'
+                else:
+                    sentiment_label = 'Positivo'
+                    color_class = 'bg-green-400'
+        elif 'clear' in request.POST:
+            poem_content = ''
+
+    return render(request, 'analyze_poem.html', {
+        'sentiment': sentiment,
+        'sentiment_label': sentiment_label,
+        'color_class': color_class,
+        'sentiment_percentage': sentiment_percentage,
+        'poem_content': poem_content
+    })
 
 
 def delete_poem(request, poem_id):
